@@ -1,0 +1,23 @@
+version: '2'
+services:
+  web:
+    build:
+     dockerfile: docker/web/Dockerfile
+     context: .
+    container_name: hsc_web
+    ports:
+      - "80:5000"
+    volumes:
+      - ./web:/usr/src/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    container_name: hsc_redis
+    volumes:
+      - hsc_redis:/data
+
+volumes:
+  hsc_redis:
+    driver: local
