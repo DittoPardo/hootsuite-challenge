@@ -1,0 +1,8 @@
+version: '2'
+
+# meant to extend debug.yml. one may then attach to web container and run cmd line tests
+services:
+  web:
+    command: sh
+    env_file:
+      - docker/web/.envs/test.env

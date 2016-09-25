@@ -1,0 +1,9 @@
+version: '2'
+
+# Meant to extend docker-compose.yml
+# Starts a debug version of flask app container, onto which one can attach and interact with stdin/out
+services:
+  web:
+    tty: true
+    stdin_open: true
+

@@ -9,6 +9,14 @@ services:
       - "80:5000"
     volumes:
       - ./web:/usr/src/app
+    logging:
+      options:
+        max-size: "500k"
+        max-file: "2"
+    env_file:
+      - docker/.envs/common.env
+      - docker/web/.envs/common.env
+      - docker/web/.envs/dev.env
     depends_on:
       - redis
 
@@ -17,6 +25,11 @@ services:
     container_name: hsc_redis
     volumes:
       - hsc_redis:/data
+    logging:
+      options:
+        max-size: "500k"
+        max-file: "2"
+
 
 volumes:
   hsc_redis:
