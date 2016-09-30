@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, request, url_for
 from redis import Redis
 
 debug = bool(os.environ.get('HSC_DEBUG', False))
@@ -14,13 +14,18 @@ def create_app(config_filename=None):
     return app
 
 
-web_app = create_app()
+app = create_app()
 
 
-@web_app.route('/')
+@app.route('/')
 def hello():
     redis.incr('hits')
     return 'Hello World! I have been seen {} times'.format(int(redis.get('hits')))
 
+
+@app.route('/items')
+def items():
+    return 'items'
+
 if __name__ == '__main__':
-    web_app.run(host='0.0.0.0', debug=debug)
+    app.run(host='0.0.0.0', debug=debug)

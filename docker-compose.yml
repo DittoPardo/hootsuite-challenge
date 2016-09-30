@@ -5,6 +5,7 @@ services:
      dockerfile: docker/web/Dockerfile
      context: .
     container_name: hsc_web
+    command: python reddit_web_app/reddit_web_app.py
     ports:
       - "80:5000"
     volumes:
