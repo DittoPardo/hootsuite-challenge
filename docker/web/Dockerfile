@@ -4,5 +4,5 @@ RUN mkdir -p /usr/src/app
 COPY web /usr/src/app
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get -y --no-install-recommends install vim telnet net-tools
+RUN apt-get update && apt-get -y --no-install-recommends install vim telnet net-tools bash
 RUN pip install -r requirements-dev.txt

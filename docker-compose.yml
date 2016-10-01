@@ -31,7 +31,24 @@ services:
         max-size: "500k"
         max-file: "2"
 
+  mongo:
+    image: mongo:3.2
+    container_name: hsc_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - hsc_mongo_db:/data/db
+      - ./docker/mongo/configdb:/data/configdb
+    env_file:
+      - docker/.envs/common.env
+    logging:
+      options:
+        max-size: "500k"
+        max-file: "2"
+
 
 volumes:
   hsc_redis:
+    driver: local
+  hsc_mongo_db:
     driver: local
