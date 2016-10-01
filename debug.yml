@@ -7,3 +7,6 @@ services:
     tty: true
     stdin_open: true
 
+  feeder:
+    tty: true
+    stdin_open: true

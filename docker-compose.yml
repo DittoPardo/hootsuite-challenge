@@ -20,6 +20,20 @@ services:
       - docker/web/.envs/dev.env
     depends_on:
       - redis
+      - mongo
+
+  feeder:
+    build:
+      dockerfile: docker/feeder-service/Dockerfile
+      context: .
+    container_name: hsc_feeder
+    command: python feeder-daemon.py
+    volumes:
+      - ./feeder-service:/usr/src/app
+    env_file:
+      - docker/.envs/common.env
+    depends_on:
+      - mongo
 
   redis:
     image: redis
