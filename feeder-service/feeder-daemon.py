@@ -4,13 +4,14 @@ import socket
 import sys
 from contextlib import contextmanager
 
-from reddit_reader import consume_reddit
+from reddit_reader import RedditReader
 from settings import *
 
 g_keep_going = True
 
 
-# TODO This should be a detached daemon as the name implies - but thanks to docker there really is not need
+# This should be a detached daemon as the name implies - but thanks to docker there really is no need
+
 
 @contextmanager
 def setup():
@@ -44,7 +45,10 @@ def handle_request(request):
     if command == 'stop':
         stop_server()
     elif command == 'read':
-        consume_reddit(request)
+        # TODO we should catch exceptions for this part, we are a 'daemon' after all:)
+        with RedditReader() as rr:
+            for subreddit in request.get('subreddits', []):
+                rr.consume_subreddit(subreddit)
     else:
         print('Unknown command', command, file=sys.stderr)
 
