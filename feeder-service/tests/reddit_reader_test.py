@@ -40,7 +40,7 @@ class TestRedditObject(object):
                 'id': 'author_id_1',
                 'name': 'author_1'
             },
-            'comments_ids': ['comment_id_1'],
+            #'comments_ids': ['comment_id_1'],
             'id': 'submission_id_1',
             'parent_id': 'subreddit_id_1',
             'subreddit_id': 'subreddit_id_1',

@@ -27,12 +27,13 @@ class RedditReader(object):
 
     # read from reddit, process data, store in mongo
     def consume_subreddit(self, subreddit):
-        subr = self.reddit_client.get_subreddit(subreddit).get_top(limit=10)
-        for submission in subr:
+        subr = self.reddit_client.get_subreddit(subreddit)
+        submissions = subr.get_new(limit=25)
+        for submission in submissions:
             mongo_obj_submission = RedditSubmission(submission)
             self.mongo_client.update_or_insert(mongo_obj_submission.to_mongo_obj())
-            for comment in submission.comments:
-                # TODO replies to comments are nested even farther down ?
+            # TODO We should use subreddit.get_comments() to get recent comments from everywhere...
+            for comment in praw.helpers.flatten_tree(submission.comments):
                 mongo_obj_comment = RedditComment(comment)
                 self.mongo_client.update_or_insert(mongo_obj_comment.to_mongo_obj())
 
@@ -61,7 +62,8 @@ class RedditSubmission(RedditObject):
         self.mobj_parent_id = r_submission.subreddit_id
         # link high up
         self.mobj_subreddit_id = r_submission.subreddit_id
-        self.mobj_comments_ids = [c.id for c in r_submission.comments]
+        # limit this to 10, it a tree of comments and some objects are MoreComment, so this needs change anyway
+        #self.mobj_comments_ids = [c.id for c in r_submission.comments[:10]]
         self.mobj_title = r_submission.title
         # there's also selftext on sumissions
 
@@ -70,7 +72,8 @@ class RedditComment(RedditObject):
     def __init__(self, r_comment):
         super().__init__(r_comment)
         self.mobj_type = 'comment'
-        # TODO can the parent be another comment, apparently there is a parent_id on comment of form xx_<submission_id>
+        # TODO this is wrong, the parent can be another comment,
+        # however there is a parent_id on comment of form xx_<submission_id>, so not quite the id we are looking for
         self.mobj_parent_id = r_comment.submission.id
         # link high up
         self.mobj_subreddit_id = r_comment.subreddit_id
