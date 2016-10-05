@@ -1,41 +1,40 @@
 import json
 
 import praw
-from pymongo import MongoClient
+import sys
 
+from mongo_model_reddit import MongoReddit
 from settings import (
-    MONGO_HOST,
     REDDIT_UA,
 )
 
 
 class RedditReader(object):
-    def __init__(self, mongo_host=MONGO_HOST):
+    def __init__(self):
         self.reddit_ua = REDDIT_UA
-        self.mongo_host = mongo_host
-        # TODO this should not be here... turn mongo_client into our own class with these responsabilities
-        self.mongo_db = 'hsc'
-        self.mongo_collection = 'reddits'
 
     def __enter__(self):
-        # TODO We need to setup indexes on mongo collection in order to insert or update
-        self.mongo_client = MongoClient(host=self.mongo_host)
+        self.mongo_client = MongoReddit()
         self.reddit_client = praw.Reddit(user_agent=self.reddit_ua)
         return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.reddit_client.clear_authentication()
         self.mongo_client.close()
+        if exc_type:
+            print(exc_type, exc_value, file=sys.stderr)
+        return True
 
     # read from reddit, process data, store in mongo
     def consume_subreddit(self, subreddit):
         subr = self.reddit_client.get_subreddit(subreddit).get_top(limit=10)
         for submission in subr:
             mongo_obj_submission = RedditSubmission(submission)
-            #add or replace submission to mongo
+            self.mongo_client.update_or_insert(mongo_obj_submission.to_mongo_obj())
             for comment in submission.comments:
                 # TODO replies to comments are nested even farther down ?
                 mongo_obj_comment = RedditComment(comment)
-                #add or replace comment to mongo
+                self.mongo_client.update_or_insert(mongo_obj_comment.to_mongo_obj())
 
 
 class RedditObject(object):

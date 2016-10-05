@@ -51,6 +51,7 @@ def handle_request(request):
                 rr.consume_subreddit(subreddit)
     else:
         print('Unknown command', command, file=sys.stderr)
+    print('Completed', command)
 
 
 # read and execute loop
