@@ -27,7 +27,7 @@ services:
       dockerfile: docker/feeder-service/Dockerfile
       context: .
     container_name: hsc_feeder
-    command: python feeder-daemon.py
+    command: bash ./entrypoint.sh
     volumes:
       - ./feeder-service:/usr/src/app
     env_file:

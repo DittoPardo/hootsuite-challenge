@@ -1,0 +1,2 @@
+*/15 * * * * root /usr/local/bin/python /usr/src/app/read-command.py >> /var/log/read-command.log 2>&1
+
