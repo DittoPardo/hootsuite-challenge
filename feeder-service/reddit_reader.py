@@ -30,11 +30,11 @@ class RedditReader(object):
         subr = self.reddit_client.get_subreddit(subreddit)
         submissions = subr.get_new(limit=25)
         for submission in submissions:
-            mongo_obj_submission = RedditSubmission(submission)
+            mongo_obj_submission = RedditSubmission(submission, subreddit)
             self.mongo_client.update_or_insert(mongo_obj_submission.to_mongo_obj())
             # TODO We should use subreddit.get_comments() to get recent comments from everywhere...
             for comment in praw.helpers.flatten_tree(submission.comments):
-                mongo_obj_comment = RedditComment(comment)
+                mongo_obj_comment = RedditComment(comment, subreddit)
                 self.mongo_client.update_or_insert(mongo_obj_comment.to_mongo_obj())
                 if job_control.should_exit:
                     return
@@ -43,7 +43,10 @@ class RedditReader(object):
 
 
 class RedditObject(object):
-    def __init__(self, r_object):
+    def __init__(self, r_object, subreddit=None):
+        if not subreddit:
+            subreddit = list(filter(None, r_object.subreddit.url.split('/')))[-1].lower()
+        self.mobj_subreddit = subreddit
         self.mobj_id = r_object.id
         self.mobj_created = r_object.created
         self.mobj_author = {
@@ -61,8 +64,8 @@ class RedditObject(object):
 
 
 class RedditSubmission(RedditObject):
-    def __init__(self, r_submission):
-        super().__init__(r_submission)
+    def __init__(self, r_submission, *args, **kwargs):
+        super().__init__(r_submission, *args, **kwargs)
         self.mobj_type = 'submission'
         self.mobj_parent_id = r_submission.subreddit_id
         # link high up
@@ -74,8 +77,8 @@ class RedditSubmission(RedditObject):
 
 
 class RedditComment(RedditObject):
-    def __init__(self, r_comment):
-        super().__init__(r_comment)
+    def __init__(self, r_comment, *args, **kwargs):
+        super().__init__(r_comment, *args, **kwargs)
         self.mobj_type = 'comment'
         # TODO this is wrong, the parent can be another comment,
         # however there is a parent_id on comment of form xx_<submission_id>, so not quite the id we are looking for

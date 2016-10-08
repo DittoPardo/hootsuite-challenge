@@ -33,7 +33,7 @@ class TestRedditObject(object):
         return sub
 
     def test_subbmission(self, submission):
-        rs = RedditSubmission(submission)
+        rs = RedditSubmission(submission, subreddit='python')
         mongo_object = rs.to_mongo_obj()
         # make sure this is a jsonable dict
         json.dumps(mongo_object)
@@ -44,6 +44,7 @@ class TestRedditObject(object):
             },
             #'comments_ids': ['comment_id_1'],
             'id': 'submission_id_1',
+            'subreddit': 'python',
             'created': 11.0,
             'parent_id': 'subreddit_id_1',
             'subreddit_id': 'subreddit_id_1',
@@ -53,7 +54,7 @@ class TestRedditObject(object):
         assert mongo_object == expected_obj
 
     def test_comment(self, comment):
-        rc = RedditComment(comment)
+        rc = RedditComment(comment, subreddit='python')
         mongo_object = rc.to_mongo_obj()
         # make sure this is a jsonable dict
         json.dumps(mongo_object)
@@ -63,6 +64,7 @@ class TestRedditObject(object):
                 'name': 'author_2'
             },
             'id': 'comment_id_1',
+            'subreddit': 'python',
             'created': 22.0,
             'parent_id': 'submission_id_1',
             'subreddit_id': 'subreddit_id_1',
