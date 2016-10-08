@@ -12,6 +12,7 @@ class TestRedditObject(object):
     def comment(self):
         com = Mock(spec=Comment)
         com.id = 'comment_id_1'
+        com.created = 22.0
         com.author = Mock(id='author_id_2')
         com.author.name = 'author_2'
         com.subreddit_id = 'subreddit_id_1'
@@ -23,6 +24,7 @@ class TestRedditObject(object):
     def submission(self, comment):
         sub = Mock(spec=Submission)
         sub.id = 'submission_id_1'
+        sub.created = 11.0
         sub.author = Mock(id='author_id_1')
         sub.author.name = 'author_1'
         sub.subreddit_id = 'subreddit_id_1'
@@ -42,6 +44,7 @@ class TestRedditObject(object):
             },
             #'comments_ids': ['comment_id_1'],
             'id': 'submission_id_1',
+            'created': 11.0,
             'parent_id': 'subreddit_id_1',
             'subreddit_id': 'subreddit_id_1',
             'title': 'title 1',
@@ -60,6 +63,7 @@ class TestRedditObject(object):
                 'name': 'author_2'
             },
             'id': 'comment_id_1',
+            'created': 22.0,
             'parent_id': 'submission_id_1',
             'subreddit_id': 'subreddit_id_1',
             'text': 'comment body 1',

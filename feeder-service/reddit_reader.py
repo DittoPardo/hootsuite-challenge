@@ -41,6 +41,7 @@ class RedditReader(object):
 class RedditObject(object):
     def __init__(self, r_object):
         self.mobj_id = r_object.id
+        self.mobj_created = r_object.created
         self.mobj_author = {
             'id': r_object.author.id,
             'name': r_object.author.name,
