@@ -1,8 +1,8 @@
 import json
-
 import praw
 import sys
 
+from jobcontrol import job_control
 from mongo_model_reddit import MongoReddit
 from settings import (
     REDDIT_UA,
@@ -36,6 +36,10 @@ class RedditReader(object):
             for comment in praw.helpers.flatten_tree(submission.comments):
                 mongo_obj_comment = RedditComment(comment)
                 self.mongo_client.update_or_insert(mongo_obj_comment.to_mongo_obj())
+                if job_control.should_exit:
+                    return
+            if job_control.should_exit:
+                return
 
 
 class RedditObject(object):

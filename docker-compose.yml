@@ -32,6 +32,7 @@ services:
       - ./feeder-service:/usr/src/app
     env_file:
       - docker/.envs/common.env
+      - docker/feeder-service/.envs/common.env
     depends_on:
       - mongo
 

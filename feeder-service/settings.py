@@ -11,3 +11,4 @@ SERVER_ADDRESS = 'feeder.socket'
 SUBREDDITS = [
     'python',
 ]
+INTERRUPT_GRACE_PERIOD = 3
