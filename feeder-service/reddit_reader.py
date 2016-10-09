@@ -34,6 +34,10 @@ class RedditReader(object):
             self.mongo_client.update_or_insert(mongo_obj_submission.to_mongo_obj())
             # TODO We should use subreddit.get_comments() to get recent comments from everywhere...
             for comment in praw.helpers.flatten_tree(submission.comments):
+                # TODO find out what's up with this! shouldn't flatten_tree resolve all MoreComments?!
+                # or better yet use get_comments() since we don't need this hierarchy anyway
+                if isinstance(comment, praw.objects.MoreComments):
+                    continue
                 mongo_obj_comment = RedditComment(comment, subreddit)
                 self.mongo_client.update_or_insert(mongo_obj_comment.to_mongo_obj())
                 if job_control.should_exit:
