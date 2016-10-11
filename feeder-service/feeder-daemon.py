@@ -28,7 +28,7 @@ def setup():
     try:
         yield sock
     finally:
-        sock.shutdown(socket.SHUT_RDWR)
+        sock.close()
         os.unlink(SERVER_ADDRESS)
 
 
