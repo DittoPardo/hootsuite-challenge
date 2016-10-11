@@ -10,14 +10,16 @@ from flask import (
 from flask_pymongo import PyMongo
 from redis import Redis
 
-debug = bool(os.environ.get('HSC_DEBUG', False))
+g_debug = bool(os.environ.get('HSC_DEBUG', False))
+g_testing = bool(os.environ.get('HSC_TEST', False))
 
 redis = Redis(host='redis', port=6379)
 
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('settings')
+    app.config.from_envvar('FLASK_REDDIT_SETTINGS')
+
     return app
 
 
@@ -38,14 +40,23 @@ def hello():
 
 @app.route('/items', methods=['GET'])
 def items():
+    # TODO make this part of the rest path
     subreddit = request.args['subreddit']
-    from_ts = int(request.args['from'])
-    to_ts = int(request.args['to'])
+    from_ts = int(request.args.get('from', 0))
+    to_ts = int(request.args.get('to', 0))
     keyword = request.args.get('keyword', None)
+
+    created_q = {}
+    if from_ts:
+        created_q['$gte'] = from_ts
+    if to_ts:
+        created_q['$lt'] = to_ts
+
     query = {
         'subreddit': subreddit,
-        'created': {'$gte': from_ts, '$lt': to_ts},
     }
+    if created_q:
+        query['created'] = created_q
     if keyword:
         query['$text'] = {"$search": keyword}
     reddit_items = mongo.db.reddits.find(query, {
@@ -55,4 +66,4 @@ def items():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=debug)
+    app.run(host='0.0.0.0', debug=g_debug)

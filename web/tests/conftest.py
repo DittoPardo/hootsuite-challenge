@@ -1,4 +1,5 @@
 import pytest
+from flask_pymongo import PyMongo
 from redis import Redis
 from unittest.mock import Mock
 
@@ -34,3 +35,7 @@ def client(request):
 def redis_mock():
     return Mock(spec=Redis)
 
+
+@pytest.fixture
+def mongo_mock():
+    return Mock(spec=PyMongo)
