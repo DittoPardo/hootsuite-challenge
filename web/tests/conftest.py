@@ -16,19 +16,13 @@ def app():
 
 
 @pytest.yield_fixture
-def client(request):
-    print(" +++++++++ init client fixture")
+def client():
     reddit_web_app.app.config['TESTING'] = True
     reddit_web_app.app.config['SERVER_NAME'] = 'localhost:5000'
     client = reddit_web_app.app.test_client()
 
-    def teardown():
-        print(" ------- Tearing down from addfinalizer")
-
-    request.addfinalizer(teardown)
     with reddit_web_app.app.app_context():
         yield client
-    print(" ------- Tearing down from generator end")
 
 
 @pytest.fixture

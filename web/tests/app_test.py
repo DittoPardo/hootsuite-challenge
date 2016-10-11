@@ -21,20 +21,55 @@ def test_hello(client, monkeypatch, redis_mock):
     assert b'I have been seen 1 times' in resp.data
 
 
-def test_items(client, monkeypatch, mongo_mock):
+test_items_data = [
+    (
+        {'subreddit': 'python'},
+        {'subreddit': 'python'}
+    ),
+    (
+        {'subreddit': 'python', 'from': 1},
+        {'subreddit': 'python',
+         'created': {'$gte': 1},
+        }
+    ),
+    (
+        {'subreddit': 'python', 'to': 2},
+        {'subreddit': 'python',
+         'created': {'$lt': 2},
+        }
+    ),
+    (
+        {'subreddit': 'python', 'from': 1, 'to': 2},
+        {'subreddit': 'python',
+         'created': {'$gte': 1, '$lt': 2},
+        }
+    ),
+    (
+        {'subreddit': 'python', 'from': 1, 'to': 2, 'keyword': 'aa'},
+        {'subreddit': 'python',
+         'created': {'$gte': 1, '$lt': 2},
+         '$text': {'$search': 'aa'},
+        }
+    ),
+]
+
+
+@pytest.mark.parametrize("get_params,expected_query", test_items_data)
+def test_items(client, monkeypatch, mongo_mock, get_params, expected_query):
     mongo_mock.db.reddits.find.return_value = [
-        {
-            'id': 1
-        },
-        {
-            'id': 2
-        },
+        {'id': 1},
+        {'id': 2},
     ]
     monkeypatch.setattr('reddit_web_app.reddit_web_app.mongo', mongo_mock)
-    resp = client.get(url_for('items', subreddit="python"))
+    resp = client.get(url_for('items', **get_params))
     assert resp.status_code == 200
     assert resp.content_type == 'application/json'
-    import ipdb; ipdb.set_trace()
+
+    assert mongo_mock.db.reddits.find.called
+    query, projection = mongo_mock.db.reddits.find.call_args[0]
+    assert query == expected_query
+    assert projection == {'_id': 0}
+
     # what's going on here? we don't even have content_encoding on this response.
     # flask/underling libs seem very un-python-3 here ...
     resp_json = json.loads(resp.data.decode('utf-8'))
