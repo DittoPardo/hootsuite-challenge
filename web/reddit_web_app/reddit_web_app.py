@@ -4,6 +4,7 @@ from flask import (
     Flask,
     jsonify,
     make_response,
+    render_template,
     request,
     url_for,
 )
@@ -17,7 +18,7 @@ redis = Redis(host='redis', port=6379)
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask('reddit_web_app', template_folder='html')
     app.config.from_envvar('FLASK_REDDIT_SETTINGS')
 
     return app
@@ -35,7 +36,8 @@ def not_found(error):
 @app.route('/')
 def hello():
     redis.incr('hits')
-    return 'Hello World! I have been seen {} times'.format(int(redis.get('hits')))
+    times = int(redis.get('hits'))
+    return render_template('index.html', times=times)
 
 
 @app.route('/items', methods=['GET'])
