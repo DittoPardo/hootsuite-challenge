@@ -21,6 +21,26 @@ services:
     depends_on:
       - redis
       - mongo
+      - webpack
+
+  webpack:
+    build:
+      dockerfile: docker/web/Dockerfile.webpack
+      context: .
+    container_name: hsc_webpack
+    command: bash ./webpack_entrypoint.sh
+    ports:
+      - "2992:2992"
+    volumes:
+      - ./web:/usr/src/app
+    logging:
+      options:
+        max-size: "500k"
+        max-file: "2"
+    env_file:
+      - docker/.envs/common.env
+      - docker/web/.envs/common.env
+      - docker/web/.envs/dev.env
 
   feeder:
     build:

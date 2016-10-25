@@ -9,17 +9,21 @@ from flask import (
     url_for,
 )
 from flask_pymongo import PyMongo
+from flask_webpack import Webpack
 from redis import Redis
 
 g_debug = bool(os.environ.get('HSC_DEBUG', False))
 g_testing = bool(os.environ.get('HSC_TEST', False))
+webpack = Webpack()
 
 redis = Redis(host='redis', port=6379)
 
 
 def create_app():
-    app = Flask('reddit_web_app', template_folder='html')
+    app = Flask('reddit_web_app', template_folder='templates')
     app.config.from_envvar('FLASK_REDDIT_SETTINGS')
+    app.config['DEBUG'] = g_debug
+    webpack.init_app(app)
 
     return app
 
@@ -68,4 +72,4 @@ def items():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=g_debug)
+    app.run(host='0.0.0.0', debug=g_debug, use_reloader=g_debug, use_debugger=g_debug)

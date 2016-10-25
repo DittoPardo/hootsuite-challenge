@@ -1,0 +1,47 @@
+{
+  "name": "reddit_web_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --debug --content-base reddit_web_app/static --host 0.0.0.0 --port 2992 --inline --hot --display-error-details",
+    "build": "webpack --progress --profile --colors --display-error-details",
+    "jest": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.11.5",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "image-webpack-loader": "^3.0.0",
+    "manifest-revision-webpack-plugin": "^0.3.0",
+    "mobx": "^2.3.7",
+    "mobx-react": "^3.5.1",
+    "react": "^15.2.1",
+    "react-dom": "^15.3.0",
+    "react-router": "^2.8.1"
+  },
+  "devDependencies": {
+    "babel-jest": "^15.0.0",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-class-properties": "^6.10.2",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "css-loader": "^0.23.1",
+    "enzyme": "^2.4.1",
+    "jest": "^15.1.1",
+    "react-addons-test-utils": "^15.3.0",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest"
+  }
+}
