@@ -1,5 +1,6 @@
 # hootsuite-challenge
-A simple project to experiment with flask, mongodb, docker, py.test, python3, reddit api (praw) and more
+A simple project to experiment with flask, mongodb, docker, py.test, python3, reddit api (praw), reactJs, mobx, webpack,
+babel, jest
 
 ## Requirements
 
@@ -16,6 +17,8 @@ This project uses (official) images stored on docker hub
 
 containers are named 
  - hsc_web: the flask web service
+ - hsc_webpack: the webpack dev server for live refresh. Also takes care of flask assests. On production buils this
+ container compiles js, css, images and manifest.json for flask assets and exits.
  - hsc_mongo: the mongo service
  - hsc_feeder: the script that fetches data from reddit periodically. it is client server based on unix socket. brings up cron too
  - hsc_redis: has no purpose except for a small demo, but it will have a greater role to play
@@ -57,7 +60,7 @@ Alternatively one may use the shell scripts for convenience:
  
  ## Todo
  - Better test coverage, e2e tests
- - Add a react frontend (using mobx :) )
+ - Add test framework to front end
  - mongos and shards
  
  ## End
