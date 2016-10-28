@@ -24,14 +24,19 @@ export default class RedditFinder extends React.Component {
             params['keyword'] = keyword
         }
 
+        this.props.store.loading = true
         axios.get("/items", {
             params: params
         })
             .then(response => {
+                console.log("got response")
                 this.props.store.clearAllReddits()
+                console.log("cleared old data from store")
                 response.data.items.map(item => {
                     this.props.store.addReddit(new Reddit(item))
                 })
+                console.log("populated store")
+                this.props.store.loading = false
             })
             .catch(error => {
                 if (error.response) {
@@ -39,6 +44,7 @@ export default class RedditFinder extends React.Component {
                 } else {
                     console.log(`Error processing /items endpoint. ${error.message}`)
                 }
+                this.props.store.loading = false
             })
     }
 

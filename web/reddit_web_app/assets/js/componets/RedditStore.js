@@ -23,7 +23,7 @@ export class RedditStore {
     @observable from_dt = ""
     @observable to_dt = ""
     @observable keyword = ""
-    @observable reddits = []
+    reddits = []
 
     @observable loading = false
 
@@ -32,7 +32,8 @@ export class RedditStore {
     }
 
     clearAllReddits() {
-        this.reddits.replace([])
+        // this.reddits.replace([])
+        this.reddits = []
     }
 }
 
