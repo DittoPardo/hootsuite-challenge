@@ -2,7 +2,8 @@
 <html>
 <head>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <!--<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet">
     {{ stylesheet_tag('app_css') | safe }}
 </head>
 <body>
@@ -12,7 +13,6 @@
     </div>
     <div id="react-reddit-app">
     </div>
-    <!--<script src="{{ url_for('static', filename='js/main.min.js') }}"></script>-->
     {{ javascript_tag('app_js') | safe }}
 </body>
 </html>
