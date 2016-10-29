@@ -48,6 +48,12 @@ export default class RedditFinder extends React.Component {
             })
     }
 
+    findOnKey(e) {
+        if (e.which === 13) {
+            this.find()
+        }
+    }
+
     _storeInput(field, value) {
         this.props.store[field] = value
     }
@@ -68,6 +74,36 @@ export default class RedditFinder extends React.Component {
         this._storeInput("to_dt", dt)
     }
 
+    // TODO make this case insensitive
+    highlight(content) {
+        let hContent = (
+            <span>
+                {content}
+            </span>
+        )
+        const { keyword } = this.props.store
+        if (!keyword) return hContent
+
+        const keywords = keyword.split(' ')
+        if (keywords.length > 1) return hContent // bail out - this is not trivial
+
+        const pieces = content.split(keyword)
+        if (pieces.length === 1) {
+            return hContent
+        }
+
+        // This reduce will produce nested <span> elements as React requires us to wrap all new creations into a root element
+        hContent = pieces.reduce((a, b) => (
+            <span>
+                {a}
+                <strong>{keyword}</strong>
+                {b}
+            </span>
+        ))
+
+        return hContent
+    }
+
     render() {
         const { format } = this.props
         const { subreddit, from_dt, to_dt, keyword, reddits, loading } = this.props.store
@@ -75,14 +111,17 @@ export default class RedditFinder extends React.Component {
         let from = from_dt && from_dt.format(format)
         let to = to_dt && to_dt.format(format)
 
-        const redditList = reddits.map( reddit => (
+        const redditList = reddits.map( reddit => {
+            const content = this.highlight(reddit.content)
+            return (
             <li key={reddit.id}>
-                <span>{reddit.content}</span>
+                {content}
             </li>
-        ))
+            )
+        })
 
         return (
-            <div>
+            <div onKeyPress={this.findOnKey.bind(this)}>
                 <h3>Search cached reddit</h3>
                 <label htmlFor="find-in-subreddit">subreddit: </label>
                 <input id="find-in-subreddit" value={subreddit} onChange={this.subreddit.bind(this)}/>
