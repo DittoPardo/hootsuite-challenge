@@ -7,6 +7,11 @@ services:
     env_file:
       - docker/web/.envs/test.env
 
+  webpack:
+    command: bash
+    env_file:
+      - docker/web/.envs/test.env
+
   feeder:
     command: bash
     env_file:

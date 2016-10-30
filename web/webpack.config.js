@@ -37,7 +37,7 @@ module.exports = {
       {
         test: /\.js$/,
         include: path.join(rootAssetPath, 'js'),
-        exclude: /(node_modules|bower_components)/,
+        exclude: /(node_modules|bower_components|__tests__)/,
         loaders: ['babel-loader'],
       },
       {
