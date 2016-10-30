@@ -124,6 +124,7 @@ export default class RedditFinder extends React.Component {
             )
         })
 
+        console.log(reddits.length)
         return (
             <div onKeyPress={this.findOnKey.bind(this)}>
                 <h3>Search cached reddit</h3>
@@ -137,6 +138,7 @@ export default class RedditFinder extends React.Component {
                 <input id="find-in-keyword" value={keyword} onChange={this.keyword.bind(this)}/>
                 <button id="find-search" className="btn btn-primary" onClick={this.find.bind(this)}>Search</button>
                 <div id="find-loader" style={{display: loading ? "block" : "none"}}><b>fetching...</b></div>
+                <div id="find-loaded" style={{display: loading ? "none" : "block"}}>Fetched {reddits.length} results</div>
                 <ul>{redditList}</ul>
             </div>
         )
