@@ -25,13 +25,20 @@ export default class RedditFinder extends React.Component {
         }
 
         this.props.store.loading = true
+        // Do the clearing here as store.reddits is not an observable array
+        this.props.store.clearAllReddits()
         axios.get("/items", {
             params: params
         })
             .then(response => {
                 console.log("got response")
-                this.props.store.clearAllReddits()
-                console.log("cleared old data from store")
+                /* This is weird.
+                If this assignment is down below, next to loading, then it will not show up in render (only at next render)
+                It is true that highlightBy is *not* @observable in RedditStore (I don't think it needs be)
+                But it is still weird that assigning here will make it show and assigning it after addReddits will not
+                Note that store.reddits is not an observable array either...
+                */
+                this.props.store.highlightBy = keyword.split(' ')
                 response.data.items.map(item => {
                     this.props.store.addReddit(new Reddit(item))
                 })
@@ -81,16 +88,13 @@ export default class RedditFinder extends React.Component {
                 {content}
             </span>
         )
-        const { keyword } = this.props.store
-        if (!keyword) return hContent
-
-        const keywords = keyword.split(' ')
-        if (keywords.length > 1) return hContent // bail out - this is not trivial
+        const { highlightBy } = this.props.store
+        // if none - don't highlight; if more than one - bail out (this highlight is not trivial)
+        if (highlightBy.length !== 1 || !highlightBy[0]) return hContent
+        const keyword = highlightBy[0]
 
         const pieces = content.split(keyword)
-        if (pieces.length === 1) {
-            return hContent
-        }
+        if (pieces.length === 1) return hContent
 
         // This reduce will produce nested <span> elements as React requires us to wrap all new creations into a root element
         hContent = pieces.reduce((a, b) => (
@@ -132,7 +136,7 @@ export default class RedditFinder extends React.Component {
                 <label htmlFor="find-in-keyword">keyword: </label>
                 <input id="find-in-keyword" value={keyword} onChange={this.keyword.bind(this)}/>
                 <button id="find-search" className="btn btn-primary" onClick={this.find.bind(this)}>Search</button>
-                <span id="find-loader" style={{display: loading ? "auto" : "none"}}>fetching...</span>
+                <div id="find-loader" style={{display: loading ? "block" : "none"}}><b>fetching...</b></div>
                 <ul>{redditList}</ul>
             </div>
         )

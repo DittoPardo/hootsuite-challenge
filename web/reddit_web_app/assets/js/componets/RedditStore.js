@@ -1,4 +1,4 @@
-import { computed, observable } from "mobx"
+import { observable } from "mobx"
 
 export class Reddit {
     id
@@ -23,9 +23,11 @@ export class RedditStore {
     @observable from_dt = ""
     @observable to_dt = ""
     @observable keyword = ""
+    // very poor performance if we make this observable; and no need for that, this does not change outside of RedditFinder.find()
     reddits = []
 
     @observable loading = false
+    highlightBy = []
 
     addReddit(reddit) {
         this.reddits.push(reddit)
