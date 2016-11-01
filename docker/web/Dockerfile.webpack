@@ -1,12 +1,23 @@
 FROM python:3.5-slim
 
-RUN mkdir -p /usr/src/app
-COPY web /usr/src/app
-WORKDIR /usr/src/app
-
-RUN apt-get update && apt-get -y --no-install-recommends install curl vim telnet net-tools bash
+RUN apt-get update && apt-get -y --no-install-recommends install curl vim telnet net-tools bash sudo
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && apt-get install nodejs -y
 RUN npm install -g webpack
+# fix aufs + npm EXDEV error by giving up on fs.rename atomicity
+# RUN cd $(npm root -g)/npm && npm install fs-extra && sed -i -e s/graceful-fs/fs-extra/ -e s/fs\.rename/fs.move/ ./lib/utils/rename.js
+
+RUN adduser --disabled-password --gecos '' --shell /bin/false web
+RUN adduser web sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+ENV HOME=/home/web
+
+RUN mkdir -p $HOME/app
+COPY web/package.json $HOME/app/
+RUN chown -R web:web $HOME/*
+
+USER web
+WORKDIR $HOME/app
+
+
 # TODO this should be global but I ran into issues with some npm packages
 RUN npm install
-RUN webpack

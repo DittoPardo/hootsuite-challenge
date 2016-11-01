@@ -8,8 +8,8 @@ services:
     command: python reddit_web_app/reddit_web_app.py
     ports:
       - "80:5000"
-    volumes:
-      - ./web:/usr/src/app
+    volumes_from:
+      - webpack
     logging:
       options:
         max-size: "500k"
@@ -32,7 +32,8 @@ services:
     ports:
       - "2992:2992"
     volumes:
-      - ./web:/usr/src/app
+      - ./web:/home/web/app
+      - /home/web/app/node_modules
     logging:
       options:
         max-size: "500k"
